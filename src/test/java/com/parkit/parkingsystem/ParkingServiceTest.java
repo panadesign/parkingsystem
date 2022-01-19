@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,22 +59,4 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 	}
 
-	//test méthode mock vérifie ABCDEF exist -> true
-	//test méthode mock vérifie ABCDEF no exist -> false
-/*
-	@Test
-	public void testVehicleIsAlreadyInDatabase() {
-
-		String vehicleRegNumberWanted = "ABCDEF";
-		Ticket ticketABCDEF = new Ticket();
-		ticketABCDEF.setVehicleRegNumber("ABCDEF");
-		when(ticketDAO.getTicket(vehicleRegNumberWanted)).thenReturn(ticketABCDEF);
-
-		Boolean result = parkingService.verifyVehicleIsAlreadyInDatabase("ABCDEF");
-		assertTrue(result.equals(ticketABCDEF));
-
-		verify(ticketDAO, Mockito.times(1)).getTicket("ABCDEF");
-
-
-	}*/
 }
