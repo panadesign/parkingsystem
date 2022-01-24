@@ -47,7 +47,7 @@ public class ParkingService {
 				ticket.setPrice(0);
 				ticket.setInTime(inTime);
 				ticket.setOutTime(null);
-				if(isDiscounted) {
+				if (isDiscounted) {
 					System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 				}
 				ticketDAO.saveTicket(ticket);

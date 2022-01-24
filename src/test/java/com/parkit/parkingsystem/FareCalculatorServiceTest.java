@@ -15,16 +15,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
+
 @ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
 
 	private static FareCalculatorService fareCalculatorService;
-	//private static ParkingService parkingService;
+	private static ParkingService parkingService;
 	@Mock
 	private static TicketDAO ticketDAO;
 
@@ -204,5 +203,6 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket, isDiscounted);
 		assertEquals((Fare.BIKE_FARE_PER_HOUR_DISCOUNT_5_PERCENT), ticket.getPrice());
 	}
+
 
 }
