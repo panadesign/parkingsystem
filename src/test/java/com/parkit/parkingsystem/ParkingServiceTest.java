@@ -7,15 +7,20 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,5 +63,18 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 	}
 
+	@Test
+	public void processExitingBikeFalseTest() {
+		Ticket ticket = new Ticket();
+		ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+		ParkingSpot parkingSpotBike = new ParkingSpot(3, ParkingType.BIKE, false);
+		ticket.setParkingSpot(parkingSpotBike);
+		ticket.setVehicleRegNumber("ABCDEF");
 
+		when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
+		//when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
+		parkingService.processExitingVehicle();
+		verify(ticketDAO, Mockito.times(1)).updateTicket(ticket);
+
+	}
 }
