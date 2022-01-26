@@ -31,7 +31,7 @@ public class ParkingServiceTest {
 	private static TicketDAO ticketDAO;
 	private static ParkingService parkingService;
 
-	@BeforeAll
+	@BeforeEach
 	private void setup (){
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 	}
@@ -58,6 +58,7 @@ public class ParkingServiceTest {
 
 	@Test
 	public void processExitingVehicleTest() {
+		setup();
 		setUpExitingProcess();
 		parkingService.processExitingVehicle();
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
