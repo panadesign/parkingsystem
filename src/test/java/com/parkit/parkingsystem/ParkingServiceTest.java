@@ -7,20 +7,17 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import com.sun.org.apache.xpath.internal.operations.Equals;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.parkit.parkingsystem.constants.ParkingType.CAR;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,15 +29,18 @@ public class ParkingServiceTest {
 	private static ParkingSpotDAO parkingSpotDAO;
 	@Mock
 	private static TicketDAO ticketDAO;
-	@Mock
 	private static ParkingService parkingService;
 
-	@BeforeEach
-	private void setUpPerTest() {
+	@BeforeAll
+	private void setup (){
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+	}
+
+	private void setUpExitingProcess() {
 		try {
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
-			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+			ParkingSpot parkingSpot = new ParkingSpot(1, CAR, false);
 			Ticket ticket = new Ticket();
 			ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
 			ticket.setParkingSpot(parkingSpot);
@@ -50,7 +50,6 @@ public class ParkingServiceTest {
 
 			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 
-			parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Failed to set up test mock objects");
@@ -59,22 +58,50 @@ public class ParkingServiceTest {
 
 	@Test
 	public void processExitingVehicleTest() {
+		setUpExitingProcess();
 		parkingService.processExitingVehicle();
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 	}
 
 	@Test
-	public void processExitingBikeFalseTest() {
-		Ticket ticket = new Ticket();
-		ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
-		ParkingSpot parkingSpotBike = new ParkingSpot(3, ParkingType.BIKE, false);
-		ticket.setParkingSpot(parkingSpotBike);
-		ticket.setVehicleRegNumber("ABCDEF");
+	public void processIncomingBikeWithAvailableSpotTest() {
+		// GIVEN
+		int availableSpot = 4;
+		String vehicleRegNumber = "XXXXX";
 
-		when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
-		//when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
-		parkingService.processExitingVehicle();
-		verify(ticketDAO, Mockito.times(1)).updateTicket(ticket);
+		// WHEN
+		when(inputReaderUtil.readSelection()).thenReturn(2);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(availableSpot);
 
+		try {
+			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		parkingService.processIncomingVehicle();
+
+		// THEN
+		try {
+			verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+		verify(ticketDAO, Mockito.times(1)).vehicleExistInDatabase(vehicleRegNumber);
+	}
+
+	@Test
+	public void processIncomingBikeWithoutAvailableSpotTest() {
+		int unavailableSpot = -1;
+		when(inputReaderUtil.readSelection()).thenReturn(2);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(unavailableSpot);
+
+		parkingService.processIncomingVehicle();
+		try {
+			verify(inputReaderUtil, Mockito.times(0)).readVehicleRegistrationNumber();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

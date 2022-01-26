@@ -23,9 +23,6 @@ import java.util.Date;
 public class FareCalculatorServiceTest {
 
 	private static FareCalculatorService fareCalculatorService;
-	private static ParkingService parkingService;
-	@Mock
-	private static TicketDAO ticketDAO;
 
 
 	private Ticket ticket;
@@ -203,6 +200,5 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket, isDiscounted);
 		assertEquals((Fare.BIKE_FARE_PER_HOUR_DISCOUNT_5_PERCENT), ticket.getPrice());
 	}
-
 
 }
