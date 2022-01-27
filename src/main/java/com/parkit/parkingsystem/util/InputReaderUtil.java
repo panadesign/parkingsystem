@@ -3,12 +3,14 @@ package com.parkit.parkingsystem.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class InputReaderUtil {
 
 	private static final Logger logger = LogManager.getLogger("InputReaderUtil");
-	private static Scanner scan = new Scanner(System.in);
+	private final String encoding = StandardCharsets.UTF_8.name();
+	private Scanner scan = new Scanner(System.in, encoding);
 
 	public int readSelection() {
 		try {
