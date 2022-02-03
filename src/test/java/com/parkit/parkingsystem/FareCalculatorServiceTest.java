@@ -1,23 +1,27 @@
 package com.parkit.parkingsystem;
 
+import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
-import com.parkit.parkingsystem.service.ParkingService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
@@ -201,4 +205,53 @@ public class FareCalculatorServiceTest {
 		assertEquals((Fare.BIKE_FARE_PER_HOUR_DISCOUNT_5_PERCENT), ticket.getPrice());
 	}
 
+	@Test
+	public void calculateFareUnknownVehicle() {
+		Date inTime = new Date();
+		inTime.setTime(System.currentTimeMillis() - (60 * 60 * 1000));
+		Date outTime = new Date();
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+
+		boolean isDiscounted = false;
+		ticket.setInTime(inTime);
+		ticket.setOutTime(outTime);
+		ticket.setParkingSpot(parkingSpot);
+		fareCalculatorService.calculateFare(ticket, isDiscounted);
+		assertEquals(Fare.BIKE_RATE_PER_HOUR, ticket.getPrice());
+	}
+
+	public static class DataBaseConfigTest {
+
+		private final DataBaseConfig dataBaseConfig = new DataBaseConfig();
+
+		@Test
+		public void closeConnectionTest() throws SQLException {
+			// GIVEN
+			Connection connection = Mockito.mock(Connection.class);
+
+			// WHEN
+			dataBaseConfig.closeConnection(connection);
+
+			// THEN
+			verify(connection, Mockito.times(1)).close();
+		}
+
+		@Test
+		public void closePrepareStatementTest() throws SQLException {
+			PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+
+			dataBaseConfig.closePreparedStatement(preparedStatement);
+
+			verify(preparedStatement, Mockito.times(1)).close();
+
+		}
+
+		@Test
+		public void closeresultSetTest() throws SQLException {
+			ResultSet resultSetMock = Mockito.mock(ResultSet.class);
+			dataBaseConfig.closeResultSet(resultSetMock);
+			verify(resultSetMock, Mockito.times(1)).close();
+		}
+
+	}
 }

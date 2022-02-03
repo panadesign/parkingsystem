@@ -6,11 +6,13 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.FileNotFoundException;
+
 public class InteractiveShell {
 
 	private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
-	public static void loadInterface() {
+	public static void loadInterface() throws FileNotFoundException {
 		logger.info("App initialized!!!");
 		System.out.println("Welcome to Parking System!");
 
