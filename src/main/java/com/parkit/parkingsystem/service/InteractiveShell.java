@@ -17,7 +17,7 @@ public class InteractiveShell {
 		System.out.println("Welcome to Parking System!");
 
 		boolean continueApp = true;
-		InputReaderUtil inputReaderUtil = new InputReaderUtil();
+		InputReaderUtil inputReaderUtil = new InputReaderUtil(System.in);
 		ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
 		TicketDAO ticketDAO = new TicketDAO();
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -45,7 +45,7 @@ public class InteractiveShell {
 		}
 	}
 
-	private static void loadMenu() {
+	public static void loadMenu() {
 		System.out.println("Please select an option. Simply enter the number to choose an action");
 		System.out.println("1 New Vehicle Entering - Allocate Parking Space");
 		System.out.println("2 Vehicle Exiting - Generate Ticket Price");

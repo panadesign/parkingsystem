@@ -7,7 +7,6 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,9 +15,6 @@ public class ParkingSpotDAO {
 	private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
-	public ParkingSpotDAO() throws FileNotFoundException {
-	}
 
 	public int getNextAvailableSlot(ParkingType parkingType) {
 		Connection con = null;

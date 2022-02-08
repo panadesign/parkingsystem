@@ -108,7 +108,7 @@ public class TicketDAO {
 			dataBaseConfig.closePreparedStatement(ps);
 			dataBaseConfig.closeResultSet(rs);
 		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+			logger.error("Error verifying vehicle already exist in database", ex);
 		}
 		return visits >= 2;
 	}

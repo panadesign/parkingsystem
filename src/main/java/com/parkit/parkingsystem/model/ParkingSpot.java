@@ -15,7 +15,7 @@ public class ParkingSpot {
 	 * @param parkingType
 	 * parkingType define the type of parking space, car or bike
 	 * @param isAvailable
-	 * use for define is a parking space is availabe or not
+	 * use for define is a parking space is available or not
 	 */
 	public ParkingSpot(int number, ParkingType parkingType, boolean isAvailable) {
 		this.number = number;
