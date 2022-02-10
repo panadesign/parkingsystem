@@ -35,6 +35,7 @@ public class DataBaseConfigTest {
 	public void closeConnectionTest() throws SQLException {
 		// GIVEN
 		Connection connection = Mockito.mock(Connection.class);
+
 		// WHEN
 		dataBaseConfig.closeConnection(connection);
 

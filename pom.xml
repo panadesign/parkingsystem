@@ -162,11 +162,12 @@
                 <version>0.8.5</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*DBConstants.*</exclude>
-                        <exclude>**/*Fare.*</exclude>
-                        <exclude>**/*ParkingType.*</exclude>
-                        <exclude>**/*Ticket.*</exclude>
-                        <exclude>**/*ParkingSpot.*</exclude>
+
+
+
+                        <exclude>com/parkit/parkingsystem/model/**/*</exclude>
+                        <exclude>com/parkit/parkingsystem/constants/**/*</exclude>
+
                     </excludes>
                 </configuration>
                 <executions>

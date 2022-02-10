@@ -15,7 +15,7 @@ public class FareCalculatorService {
 	static final int THIRTY_MINUTES_IN_MILLIS = 1800000;
 
 	/**
-	 * @param ticket is used to generate a ticket at exiting  parking
+	 * @param ticket       is used to generate a ticket at exiting  parking
 	 * @param isDiscounted is used to verify if a vehicle is available for discount
 	 */
 	public void calculateFare(Ticket ticket, boolean isDiscounted) {
@@ -55,8 +55,11 @@ public class FareCalculatorService {
 			default:
 				throw new IllegalArgumentException("Unknown Parking Type");
 		}
-
+		/*double result = (durationInMillis / 60 / 60 / 1000 * fare);
+		MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
+		BigDecimal roundedResult = new BigDecimal(result, mc);
+		double finalFare = roundedResult.doubleValue();
+*/
 		ticket.setPrice(durationInMillis / 60 / 60 / 1000 * fare);
-
 	}
 }
