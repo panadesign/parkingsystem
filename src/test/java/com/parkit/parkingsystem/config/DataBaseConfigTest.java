@@ -103,7 +103,7 @@ public class DataBaseConfigTest {
 	}
 
 	@Test
-	public void closeConnectionFailTest()  {
+	public void closeConnectionFailTest() {
 		dataBaseConfig.closeConnection(null);
 	}
 }

@@ -9,13 +9,9 @@ public class ParkingSpot {
 
 
 	/**
-	 *
-	 * @param number
-	 * number represent the number of the parking space
-	 * @param parkingType
-	 * parkingType define the type of parking space, car or bike
-	 * @param isAvailable
-	 * use for define is a parking space is available or not
+	 * @param number      number represent the number of the parking space
+	 * @param parkingType parkingType define the type of parking space, car or bike
+	 * @param isAvailable use for define is a parking space is available or not
 	 */
 	public ParkingSpot(int number, ParkingType parkingType, boolean isAvailable) {
 		this.number = number;

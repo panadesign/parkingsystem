@@ -28,7 +28,7 @@ public class ParkingDataBaseIT {
 	private static InputReaderUtil inputReaderUtil;
 
 	@BeforeAll
-	private static void setUp() throws Exception{
+	private static void setUp() throws Exception {
 		parkingSpotDAO = new ParkingSpotDAO();
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
@@ -37,7 +37,7 @@ public class ParkingDataBaseIT {
 	}
 
 	@AfterAll
-	private static void tearDown(){
+	private static void tearDown() {
 
 	}
 
@@ -48,7 +48,7 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void testParkingACar(){
+	public void testParkingACar() {
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 	}
