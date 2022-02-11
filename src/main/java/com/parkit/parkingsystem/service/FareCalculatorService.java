@@ -55,11 +55,7 @@ public class FareCalculatorService {
 			default:
 				throw new IllegalArgumentException("Unknown Parking Type");
 		}
-		/*double result = (durationInMillis / 60 / 60 / 1000 * fare);
-		MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
-		BigDecimal roundedResult = new BigDecimal(result, mc);
-		double finalFare = roundedResult.doubleValue();
-*/
+
 		ticket.setPrice(durationInMillis / 60 / 60 / 1000 * fare);
 	}
 }
