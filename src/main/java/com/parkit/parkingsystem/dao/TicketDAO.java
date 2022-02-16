@@ -22,7 +22,6 @@ public class TicketDAO {
 	public boolean saveTicket(Ticket ticket) {
 		Connection con = null;
 		PreparedStatement ps = null;
-		boolean returnState = true;
 		try {
 			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.SAVE_TICKET);
@@ -36,12 +35,12 @@ public class TicketDAO {
 			ps.execute();
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
-			returnState = false;
+			return false;
 		} finally {
 			dataBaseConfig.closePreparedStatement(ps);
 			dataBaseConfig.closeConnection(con);
 		}
-		return returnState;
+		return true;
 	}
 
 	public Ticket getTicket(String vehicleRegNumber) {
@@ -78,7 +77,6 @@ public class TicketDAO {
 	public boolean updateTicket(Ticket ticket) {
 		Connection con = null;
 		PreparedStatement ps = null;
-		boolean returnState = true;
 		try {
 			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
@@ -88,12 +86,13 @@ public class TicketDAO {
 			ps.execute();
 		} catch (Exception ex) {
 			logger.error("Error saving ticket info", ex);
-			returnState = false;
+			return false;
+
 		} finally {
 			dataBaseConfig.closePreparedStatement(ps);
 			dataBaseConfig.closeConnection(con);
 		}
-		return returnState;
+		return true;
 	}
 
 
