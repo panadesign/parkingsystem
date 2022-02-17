@@ -74,7 +74,7 @@ public class TicketDAO {
 		return ticket;
 	}
 
-	public boolean updateTicket(Ticket ticket) {
+	public boolean updateTicket(Ticket ticket) throws Exception {
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {

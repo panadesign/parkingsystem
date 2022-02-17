@@ -18,8 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TicketDAOIT {
@@ -30,10 +31,9 @@ public class TicketDAOIT {
 	private static TicketDAO ticketDAO;
 	private static DataBasePrepareService dataBasePrepareService;
 	private static Connection connection;
-
-
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
+	Logger logger;
 
 	@BeforeAll
 	public static void setUp() throws Exception {
@@ -52,26 +52,43 @@ public class TicketDAOIT {
 
 	@Test
 	public void saveTicketIT() throws SQLException {
+		try {
+			ticket = new Ticket();
+			ticket.setInTime(new Date());
+			ticket.setOutTime(new Date());
+			ticket.setVehicleRegNumber("ABCDE");
+			ticket.setPrice(0.0);
+			ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
 
-		ticket = new Ticket();
-		ticket.setInTime(new Date());
-		ticket.setOutTime(new Date());
-		ticket.setVehicleRegNumber("ABCDE");
-		ticket.setPrice(0.0);
-		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
-
-		ticketDAO.saveTicket(ticket);
-		assertTrue(ticketDAO.saveTicket(ticket));
+			ticketDAO.saveTicket(ticket);
+			assertTrue(ticketDAO.saveTicket(ticket));
+		} catch (Exception ex) {
+			assertThrows(Exception.class, () -> ticketDAO.saveTicket(ticket));
+		}
 	}
 
 	@Test
-	public void updateTicketIT() {
+	public void updateTicketIT() throws Exception {
+
 		ticket = new Ticket();
 		ticket.setOutTime(new Date());
 		ticket.setPrice(0.0);
 
 		ticketDAO.updateTicket(ticket);
 		assertTrue(ticketDAO.updateTicket(ticket));
+	}
+
+	@Test
+	public void updateTicketExceptionIT() throws Exception {
+		try {
+			ticketDAO.updateTicket(ticket);
+
+		} catch (Exception e) {
+			assertThrows(Exception.class, () -> ticketDAO.updateTicket(ticket));
+		}
+
+		ticketDAO.updateTicket(ticket);
+
 	}
 
 }
