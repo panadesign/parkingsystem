@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 public class TicketDAOTest {
@@ -23,12 +24,18 @@ public class TicketDAOTest {
 	@Test
 	public void ticketHasAParkingSpotInGetTicketTest() {
 		ticket.setParkingSpot(null);
-		assertEquals(null, ticket.getParkingSpot());
+		assertNull(ticket.getParkingSpot());
 	}
 
 	@Test
 	public void ticketHasOutTimeTest() {
 		ticket.setOutTime(date);
 		assertEquals(date, ticket.getOutTime());
+	}
+
+	@Test
+	public void ticketHasInTimeTest() {
+		ticket.setInTime(date);
+		assertEquals(date, ticket.getInTime());
 	}
 }
