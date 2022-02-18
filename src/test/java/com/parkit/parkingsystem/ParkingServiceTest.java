@@ -63,15 +63,19 @@ public class ParkingServiceTest {
 
 	@Test
 	public void updateTicketFailExitingVehicle() throws Exception {
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
+		//GIVEN
 		ParkingSpot parkingSpot = new ParkingSpot(1, CAR, false);
 		Ticket ticket = new Ticket();
+
+		//WHEN
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber("ABCDEF");
 		when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
 		when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
+
+		//THEN
 		parkingService.processExitingVehicle();
 	}
 
@@ -84,16 +88,11 @@ public class ParkingServiceTest {
 		// WHEN
 		when(inputReaderUtil.readSelection()).thenReturn(2);
 		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(availableSpot);
-
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
 
-
-		parkingService.processIncomingVehicle();
-
 		// THEN
-
+		parkingService.processIncomingVehicle();
 		verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
-
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 		verify(ticketDAO, Mockito.times(1)).vehicleExistInDatabase(vehicleRegNumber);
 	}
@@ -108,16 +107,11 @@ public class ParkingServiceTest {
 		when(inputReaderUtil.readSelection()).thenReturn(2);
 		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(availableSpot);
 		when(ticketDAO.vehicleExistInDatabase("XXXXX")).thenReturn(false);
-
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
 
-
-		parkingService.processIncomingVehicle();
-
 		// THEN
-
+		parkingService.processIncomingVehicle();
 		verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
-
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 		verify(ticketDAO, Mockito.times(1)).vehicleExistInDatabase(vehicleRegNumber);
 	}
@@ -132,33 +126,32 @@ public class ParkingServiceTest {
 		when(inputReaderUtil.readSelection()).thenReturn(2);
 		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(availableSpot);
 		when(ticketDAO.vehicleExistInDatabase("XXXXX")).thenReturn(true);
-
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
 
-
-		parkingService.processIncomingVehicle();
-
 		// THEN
+		parkingService.processIncomingVehicle();
 		verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
-
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 		verify(ticketDAO, Mockito.times(1)).vehicleExistInDatabase(vehicleRegNumber);
 	}
 
 	@Test
 	public void processIncomingBikeWithoutAvailableSpotTest() throws Exception {
+		//GIVEN
 		int unavailableSpot = -1;
+
+		//WHEN
 		when(inputReaderUtil.readSelection()).thenReturn(2);
 		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(unavailableSpot);
 
+		//THEN
 		parkingService.processIncomingVehicle();
-
 		verify(inputReaderUtil, Mockito.times(0)).readVehicleRegistrationNumber();
 
 	}
 
 	@Test
-	public void processIncomingBusFail() throws Exception {
+	public void processIncomingBusFail() {
 		when(inputReaderUtil.readSelection()).thenReturn(3);
 		parkingService.processIncomingVehicle();
 	}

@@ -164,6 +164,7 @@
                     <excludes>
                         <exclude>com/parkit/parkingsystem/model/**/*</exclude>
                         <exclude>com/parkit/parkingsystem/constants/**/*</exclude>
+                        <exclude>com/parkit/parkingsystem/App.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

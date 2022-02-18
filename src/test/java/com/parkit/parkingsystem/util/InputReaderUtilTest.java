@@ -15,10 +15,29 @@ public class InputReaderUtilTest {
 
 	@Test
 	public void readSelectionTest() {
+		//GIVEN
 		Integer expectedResponse = 1;
+
+		//WHEN
 		InputStream input = new ByteArrayInputStream(expectedResponse.toString().getBytes());
 		inputReaderUtil = new InputReaderUtil(input);
 
+		//THEN
+		Integer actualResponse = inputReaderUtil.readSelection();
+		Assertions.assertEquals(expectedResponse, actualResponse);
+	}
+
+	@Test
+	public void readSelectionFailTest() {
+		//GIVEN
+		Integer expectedResponse = -1;
+		String input = "A";
+
+		//WHEN
+		InputStream inputStream = new ByteArrayInputStream(input.toString().getBytes());
+		inputReaderUtil = new InputReaderUtil(inputStream);
+
+		//THEN
 		Integer actualResponse = inputReaderUtil.readSelection();
 		Assertions.assertEquals(expectedResponse, actualResponse);
 	}
@@ -38,12 +57,28 @@ public class InputReaderUtilTest {
 	}
 
 	@Test
-	public void readVehicleRegistrationNumberExceptionTest() throws Exception {
-
+	public void readVehicleRegistrationNumberWithoutStringExceptionTest() throws Exception {
+		//GIVEN
 		String expectedResponse = "";
+
+		//WHEN
 		InputStream input = new ByteArrayInputStream(expectedResponse.getBytes());
 		inputReaderUtil = new InputReaderUtil(input);
 
+		//THEN
+		Assertions.assertThrows(Exception.class, () -> inputReaderUtil.readVehicleRegistrationNumber());
+	}
+
+	@Test
+	public void readVehicleRegistrationNumberWithoWhiteSpaceExceptionTest() throws Exception {
+		//GIVEN
+		String expectedResponse = "  ";
+
+		//WHEN
+		InputStream input = new ByteArrayInputStream(expectedResponse.getBytes());
+		inputReaderUtil = new InputReaderUtil(input);
+
+		//THEN
 		Assertions.assertThrows(Exception.class, () -> inputReaderUtil.readVehicleRegistrationNumber());
 	}
 
