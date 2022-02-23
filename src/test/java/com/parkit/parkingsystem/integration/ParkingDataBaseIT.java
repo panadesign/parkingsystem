@@ -11,6 +11,7 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,104 +20,77 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Time;
 import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
-    private static final DataBaseConfig dataBaseTestConfig = new DataBaseTestConfig();
-    private static ParkingSpotDAO parkingSpotDAO;
-    private static TicketDAO ticketDAO;
-    private static DataBasePrepareService dataBasePrepareService;
+	private static final DataBaseConfig dataBaseTestConfig = new DataBaseTestConfig();
+	private static ParkingSpotDAO parkingSpotDAO;
+	private static TicketDAO ticketDAO;
+	private static DataBasePrepareService dataBasePrepareService;
+	private static FareCalculatorService fareCalculatorService;
 
 
-    @Mock
-    private static InputReaderUtil inputReaderUtil;
+	@Mock
+	private static InputReaderUtil inputReaderUtil;
 
-    @BeforeAll
-    private static void setUp() {
-        parkingSpotDAO = new ParkingSpotDAO();
-        parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
-        ticketDAO = new TicketDAO();
-        ticketDAO.dataBaseConfig = dataBaseTestConfig;
-        dataBasePrepareService = new DataBasePrepareService();
-        //FareCalculatorService fareCalculatorService = new FareCalculatorService();
-    }
+	@BeforeAll
+	private static void setUp() {
+		parkingSpotDAO = new ParkingSpotDAO();
+		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
+		ticketDAO = new TicketDAO();
+		ticketDAO.dataBaseConfig = dataBaseTestConfig;
+		dataBasePrepareService = new DataBasePrepareService();
+		//FareCalculatorService fareCalculatorService = new FareCalculatorService();
+	}
 
-    @BeforeEach
-    private void setUpPerTest() throws Exception {
-        when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-        dataBasePrepareService.clearDataBaseEntries();
-    }
+	@BeforeEach
+	private void setUpPerTest() throws Exception {
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		dataBasePrepareService.clearDataBaseEntries();
+	}
 
-    @AfterAll
-    private static void tearDown() {
-    }
+	@AfterAll
+	private static void tearDown() {
+	}
 
-    @Test
-    public void testParkingACar() throws Exception {
-        //GIVEN
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
+	@Test
+	public void testParkingACar() {
+		//GIVEN
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		int initialAvailableSpot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
+		parkingService.processIncomingVehicle();
 
-        //WHEN
-        Ticket ticket= new Ticket();
-        Date inTime = new Date();
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
-        ticket.setId(1);
-        ticket.setInTime(inTime);
-        ticket.setOutTime(null);
-        ticket.setVehicleRegNumber("PLAQUE1");
+		//WHEN
+		Ticket ticketSave = ticketDAO.getTicket("ABCDEF");
+		int currentAvailableSpot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
 
-        dataBaseTestConfig.getConnection();
-        inputReaderUtil.readVehicleRegistrationNumber();
-        ticketDAO.saveTicket(ticket);
-        Ticket ticketSave = ticketDAO.getTicket("PLAQUE1");
+		//THEN
+		assertNotEquals(currentAvailableSpot, initialAvailableSpot);
+		assertNotNull(ticketSave);
+	}
 
-        //THEN
-        assertNotNull(ticketSave);
-    }
+	@Test
+	public void testFareIsGeneratedWhenCarExiting() throws Exception {
+		//TODO: check that the fare generated and out time are populated correctly in the database
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		parkingService.processIncomingVehicle();
+		Ticket tempTicket = ticketDAO.getTicket("ABCDEF");
+		Thread.sleep(1000);
+		assertNull(tempTicket.getOutTime());
+		assertEquals(tempTicket.getPrice(), 0);
 
-    @Test
-    public void testParkingSpotIsUpdatedWhileParkingACar() throws Exception {
-        //GIVEN
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
+		parkingService.processExitingVehicle();
+		Ticket ticketSave = ticketDAO.getTicket("ABCDEF");
 
-        //WHEN
-        Ticket ticket= new Ticket();
-        Date inTime = new Date();
-        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
-        ticket.setId(1);
-        ticket.setInTime(inTime);
-        ticket.setOutTime(null);
-        ticket.setVehicleRegNumber("PLAQUE1");
+		assertNotNull(ticketSave.getOutTime());
+		assertNotNull(ticketSave.getPrice());
 
-        dataBaseTestConfig.getConnection();
-        inputReaderUtil.readVehicleRegistrationNumber();
-        ticketDAO.saveTicket(ticket);
-        Ticket ticketSave = ticketDAO.getTicket("PLAQUE1");
-
-
-        //THEN
-        assertTrue(parkingSpotDAO.updateParking(new ParkingSpot(1 , ParkingType.CAR, true)), String.valueOf(true));
-    }
-
-    @Test
-    public void testFareIsGeneratedWhenCarExiting() {
-        //TODO: check that the fare generated and out time are populated correctly in the database
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
-        parkingService.processExitingVehicle();
-
-
-
-
-
-    }
+	}
 
 }
